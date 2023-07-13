@@ -24,6 +24,22 @@ export const routes = [
     handle: (req, res) => {
       const { title, description } = req.body;
 
+      if (!title) {
+        return res.writeHead(400).end(
+          JSON.stringify({
+            message: "Informe o titulo da task",
+          })
+        );
+      }
+
+      if (!description) {
+        return res.writeHead(400).end(
+          JSON.stringify({
+            message: "Informe a descrição da task",
+          })
+        );
+      }
+
       database.insert("tasks", {
         id: randomUUID(),
         title,
@@ -43,10 +59,34 @@ export const routes = [
       const { id } = req.params;
       const { title, description } = req.body;
 
-      database.update("tasks", id, {
+      if (!title) {
+        return res.writeHead(400).end(
+          JSON.stringify({
+            message: "Informe o titulo da task",
+          })
+        );
+      }
+
+      if (!description) {
+        return res.writeHead(400).end(
+          JSON.stringify({
+            message: "Informe a descrição da task",
+          })
+        );
+      }
+
+      const updated = database.update("tasks", id, {
         title: title ?? null,
         description: description ?? null,
       });
+
+      if (!updated) {
+        return res.writeHead(404).end(
+          JSON.stringify({
+            message: "O id dessa task não existe",
+          })
+        );
+      }
 
       return res.writeHead(204).end();
     },
@@ -56,7 +96,16 @@ export const routes = [
     path: buildRoutePath("/tasks/:id"),
     handle: (req, res) => {
       const { id } = req.params;
-      database.delete("tasks", id);
+      const deleted = database.delete("tasks", id);
+
+      if (!deleted) {
+        res.writeHead(404).end(
+          JSON.stringify({
+            message: "O id dessa task não existe",
+          })
+        );
+      }
+
       res.writeHead(204).end();
     },
   },
@@ -65,7 +114,16 @@ export const routes = [
     path: buildRoutePath("/tasks/:id/complete"),
     handle: (req, res) => {
       const { id } = req.params;
-      database.completeTask("tasks", id);
+      const completed = database.completeTask("tasks", id);
+
+      if (!completed) {
+        return res.writeHead(404).end(
+          JSON.stringify({
+            message: "O id dessa task não existe",
+          })
+        );
+      }
+
       res.writeHead(204).end();
     },
   },
