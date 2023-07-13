@@ -1,7 +1,5 @@
 import http from "node:http";
 import { json } from "./middleware/json.js";
-import { randomUUID } from "node:crypto";
-import { Database } from "./database.js";
 import { routes } from "./routes.js";
 import { extractQueryParams } from "./utils/extract-query-params.js";
 
